@@ -15,4 +15,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/sincronizacion/usuario', 'UsuarioController@login');
+Route::post('/sync/usuario', 'UsuarioController@login');
+Route::get('/token', 'UsuarioController@token');

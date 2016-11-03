@@ -84,9 +84,45 @@ class UsuarioController extends Controller
     {
         //
     }
-    public function login()
+    public function login(Request $request)
     {
-        $user = Usuario::all();
-        return $user;
+        $userResponse = $request->user;
+        $passwordResponse = $request->password;
+        $user = Usuario::where('usuario', $userResponse)
+                        ->where('password', $passwordResponse)
+                        ->where('activo', '1')
+                        ->get();
+        $resultado = array();
+        if($user->first()){
+            $resultado["status"]="ok";
+            foreach($user as $user){
+                $resultado["data"][] = array(
+                                "id" => $user->id,
+                                "idAsesor" => $user->idAsesor,
+                                "usuario" => $user->usuario,
+                                "password" => $user->password,
+                                "administrador" => $user->administrador,
+                                "activo" => $user->activo,
+                                "fechaExpiracion" => $user->fechaExpiracion
+                            );
+            }
+            $resultado["msj"]="Si existen datos";
+        }else{
+            $resultado["status"]="fail";
+            $resultado["data"][] = array(
+                "id" => '',
+                "idAsesor" => '',
+                "usuario" => '',
+                "password" => '',
+                "administrador" => '',
+                "activo" => '',
+                "fechaExpiracion" => ''
+            );
+            $resultado["msj"]="No existen datos";
+        }
+        return json_encode($resultado);
+    }
+    public function token(){
+        echo csrf_token();
     }
 }
